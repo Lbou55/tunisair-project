@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skyline Crew — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --ink: #1A1A1A;
+    --ink-soft: #6B6B6B;
+    --brass: #D70218;
+    --brass-dark: #A5011A;
+    --line: #E6E0DC;
+    --navy: #1A2438;
+    --navy-soft: #2C3652;
+    --success: #1F7A3F;
+    --success-bg: #EAF6EE;
+    --warn: #C98A00;
+    --warn-bg: #FBF2E0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #FAFAF8;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  header {
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--navy);
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo img { height: 40px; width: auto; filter: brightness(0) invert(1); }
+  .portal-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #B9C0CC;
+    border-left: 1px solid #3A4356;
+    padding-left: 12px;
+  }
+  nav a {
+    color: #C9CFDA;
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 26px;
+  }
+  nav a.active { color: #fff; font-weight: 600; }
+  nav a:hover { color: #fff; }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 24px 100px;
+  }
+
+  .welcome-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    margin: 0 0 4px;
+  }
+  .sub { color: var(--ink-soft); font-size: 14px; }
+
+  .id-badge {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .id-badge strong { color: var(--ink); }
+
+  /* Next flight hero card */
+  .next-flight {
+    background: var(--navy);
+    color: #fff;
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-flight .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9FA9BE;
+    margin-bottom: 10px;
+  }
+  .next-flight-main {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .next-flight .route {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+  }
+  .next-flight .flight-num {
+    font-size: 14px;
+    color: #C9CFDA;
+  }
+  .next-flight-meta {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #C9CFDA;
+  }
+  .next-flight-meta .val { color: #fff; font-weight: 600; }
+
+  .next-flight-actions { margin-top: 20px; }
+  .btn-view-flight {
+    display: inline-block;
+    background: var(--brass);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btn-view-flight:hover { background: var(--brass-dark); }
+
+  /* Quick stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 18px 20px;
+  }
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .stat-card .value {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+  }
+  .duty-bar {
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .duty-bar-fill { height: 100%; background: var(--brass); }
+
+  /* Section: nav cards */
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 16px;
+  }
+  .nav-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .nav-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 20px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.12s ease;
+  }
+  .nav-card:hover { border-color: var(--navy); }
+  .nav-card .icon { font-size: 20px; margin-bottom: 10px; }
+  .nav-card .title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .nav-card .desc { font-size: 13px; color: var(--ink-soft); }
+
+  /* Upcoming roster preview */
+  .roster-preview {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .roster-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 100px 90px 110px;
+    align-items: center;
+    padding: 14px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .roster-row:last-child { border-bottom: none; }
+  .roster-row.header-row {
+    background: #FAFAFA;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .roster-row .date { color: var(--ink-soft); }
+  .roster-row .route { font-weight: 600; }
+  .status-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: var(--success-bg);
+    color: var(--success);
+    width: fit-content;
+  }
+
+  @media (max-width: 720px) {
+    .stats-row, .nav-cards { grid-template-columns: 1fr; }
+    .roster-row { grid-template-columns: 1fr; gap: 4px; }
+    .roster-row.header-row { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="assets/logo.png" alt="Tunisair logo">
+    <span class="portal-tag">Crew portal</span>
+  </div>
+  <nav>
+    <a href="pilot-dashboard.html" class="active">Dashboard</a>
+    <a href="pilot-roster.html">My roster</a>
+    <a href="pilot-profile.html">Profile</a>
+    <a href="index.html">Passenger site</a>
+  </nav>
+</header>
+
+<main>
+  <div class="welcome-row">
+    <div>
+      <h1 id="welcome-name">Welcome back</h1>
+      <p class="sub" id="welcome-role">—</p>
+    </div>
+    <div class="id-badge">Staff ID: <strong id="staff-id-badge">—</strong></div>
+  </div>
+
+  <div class="next-flight" id="next-flight-card">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="label">Assigned flights (upcoming)</div>
+      <div class="value" id="stat-flight-count">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Aircraft ratings</div>
+      <div class="value" id="stat-ratings">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Duty hours this week</div>
+      <div class="value" id="stat-duty">—</div>
+      <div class="duty-bar"><div class="duty-bar-fill" id="duty-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Quick access</div>
+  <div class="nav-cards">
+    <a href="pilot-roster.html" class="nav-card">
+      <div class="icon">🗓</div>
+      <div class="title">My roster</div>
+      <div class="desc">All upcoming assigned flights</div>
+    </a>
+    <a href="#" class="nav-card" id="current-flight-link">
+      <div class="icon">✈</div>
+      <div class="title">Current / next flight</div>
+      <div class="desc">Details, crew, and status controls</div>
+    </a>
+    <a href="pilot-profile.html" class="nav-card">
+      <div class="icon">🪪</div>
+      <div class="title">Profile & duty hours</div>
+      <div class="desc">Certifications and rest compliance</div>
+    </a>
+  </div>
+
+  <div class="section-title">Upcoming roster</div>
+  <div class="roster-preview" id="roster-preview">
+    <div class="roster-row header-row">
+      <span>Date</span>
+      <span>Route</span>
+      <span>Flight</span>
+      <span>Aircraft</span>
+      <span>Status</span>
+    </div>
+  </div>
+</main>
+
+<script src="crew-data.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const staffId = params.get('staffId') || currentCrewMember.staffId;
+
+  document.getElementById('welcome-name').textContent =
+    `Welcome back, ${currentCrewMember.firstName}`;
+  document.getElementById('welcome-role').textContent =
+    `${currentCrewMember.role} · ${currentCrewMember.aircraftRating.join(', ')}`;
+  document.getElementById('staff-id-badge').textContent = staffId;
+
+  // Next flight = first item in roster (already sorted by date in crew-data.js)
+  const nextFlight = rosterFlights[0];
+  const nextFlightCard = document.getElementById('next-flight-card');
+  nextFlightCard.innerHTML = `
+    <div class="label">Next flight</div>
+    <div class="next-flight-main">
+      <span class="route">${nextFlight.origin} → ${nextFlight.destination}</span>
+      <span class="flight-num">${nextFlight.flightNumber} · ${nextFlight.aircraft}</span>
+    </div>
+    <div class="next-flight-meta">
+      <span>Date <span class="val">${nextFlight.date}</span></span>
+      <span>Departure <span class="val">${nextFlight.depTime}</span></span>
+      <span>Gate <span class="val">${nextFlight.gate}</span></span>
+      <span>Passengers <span class="val">${nextFlight.passengerCount}/${nextFlight.capacity}</span></span>
+    </div>
+    <div class="next-flight-actions">
+      <a href="pilot-flight-detail.html?id=${nextFlight.id}" class="btn-view-flight">View flight details</a>
+    </div>
+  `;
+  document.getElementById('current-flight-link').href = `pilot-flight-detail.html?id=${nextFlight.id}`;
+
+  // Stats
+  document.getElementById('stat-flight-count').textContent = rosterFlights.length;
+  document.getElementById('stat-ratings').textContent = currentCrewMember.aircraftRating.join(' / ');
+
+  const dutyPct = Math.round((currentCrewMember.dutyHoursThisWeek / currentCrewMember.dutyHoursLimit) * 100);
+  document.getElementById('stat-duty').textContent =
+    `${currentCrewMember.dutyHoursThisWeek}h / ${currentCrewMember.dutyHoursLimit}h`;
+  document.getElementById('duty-bar-fill').style.width = dutyPct + '%';
+
+  // Roster preview (top 3)
+  const rosterPreview = document.getElementById('roster-preview');
+  rosterFlights.slice(0, 3).forEach(f => {
+    const row = document.createElement('a');
+    row.href = `pilot-flight-detail.html?id=${f.id}`;
+    row.style.textDecoration = 'none';
+    row.style.color = 'inherit';
+    row.className = 'roster-row';
+    row.innerHTML = `
+      <span class="date">${f.date}</span>
+      <span class="route">${f.origin} → ${f.destination}</span>
+      <span>${f.flightNumber}</span>
+      <span>${f.aircraft}</span>
+      <span class="status-pill">${f.status}</span>
+    `;
+    rosterPreview.appendChild(row);
+  });
+</script>
+
+</body>
+</html>

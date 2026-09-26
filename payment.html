@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skyline — Payment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --ink: #1A1A1A;
+    --ink-soft: #6B6B6B;
+    --brass: #D70218;
+    --brass-dark: #A5011A;
+    --line: #E6E0DC;
+    --danger: #A5011A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  header {
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+  .logo img { height: 60px; width: auto; }
+  nav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 28px;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+
+  .steps {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .step { display: flex; align-items: center; gap: 6px; }
+  .step .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .step.done .dot, .step.active .dot { background: var(--brass); }
+  .step.active { color: var(--ink); font-weight: 600; }
+  .step-sep { color: var(--line); }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 30px;
+    margin: 0 0 4px;
+  }
+  .sub { color: var(--ink-soft); font-size: 14px; margin: 0 0 32px; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* Payment form card */
+  .pay-card {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 28px;
+    position: relative;
+  }
+  .pay-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--brass);
+    border-radius: 4px 4px 0 0;
+  }
+
+  .pay-card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 20px;
+  }
+
+  .card-brands {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .card-brand {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 5px 10px;
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .field label { font-size: 12px; color: var(--ink-soft); }
+  .field input {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    width: 100%;
+    letter-spacing: 0.02em;
+  }
+  .field input:focus { outline: none; border-bottom: 1px solid var(--brass-dark); }
+  .field.error input { border-bottom: 1px solid var(--danger); }
+  .field .err-msg { font-size: 12px; color: var(--danger); min-height: 14px; }
+
+  .promo-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+    margin-bottom: 24px;
+  }
+  .promo-row input {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+  }
+  .promo-row input:focus { outline: none; border-bottom: 1px solid var(--brass-dark); }
+  .apply-btn {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brass-dark);
+    cursor: pointer;
+  }
+  .apply-btn:hover { border-color: var(--brass-dark); }
+  .promo-msg { font-size: 12px; margin-top: -18px; margin-bottom: 20px; min-height: 14px; }
+  .promo-msg.success { color: #1F7A3F; }
+  .promo-msg.error { color: var(--danger); }
+
+  .secure-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .pay-btn {
+    width: 100%;
+    background: var(--brass);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .pay-btn:hover { background: var(--brass-dark); }
+
+  /* Order summary sidebar */
+  .summary-panel {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px;
+    position: sticky;
+    top: 24px;
+  }
+  .summary-panel h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 16px;
+  }
+
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .summary-line span:last-child { color: var(--ink); }
+
+  .summary-divider { border-top: 1px solid var(--line); margin: 16px 0; }
+
+  .summary-passengers {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .summary-passengers div { margin-bottom: 4px; }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .total-row .label { font-size: 13px; color: var(--ink-soft); }
+  .total-row .value {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--brass-dark);
+  }
+
+  @media (max-width: 720px) {
+    .layout { grid-template-columns: 1fr; }
+    .summary-panel { position: static; order: -1; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="assets/tna.jfif" alt="Tunisair logo">
+  </div>
+  <nav>
+    <a href="index.html">Search flights</a>
+    <a href="login.html">Log in</a>
+  </nav>
+</header>
+
+<main>
+  <div class="steps">
+    <div class="step done"><span class="dot"></span> Flight</div>
+    <span class="step-sep">—</span>
+    <div class="step done"><span class="dot"></span> Seats</div>
+    <span class="step-sep">—</span>
+    <div class="step done"><span class="dot"></span> Passenger details</div>
+    <span class="step-sep">—</span>
+    <div class="step active"><span class="dot"></span> Payment</div>
+  </div>
+
+  <h1>Payment</h1>
+  <p class="sub">Enter your card details to complete the booking.</p>
+
+  <div class="layout">
+    <div class="pay-card">
+      <h2>Card details</h2>
+      <div class="card-brands">
+        <span class="card-brand">Visa</span>
+        <span class="card-brand">Mastercard</span>
+        <span class="card-brand">Amex</span>
+      </div>
+
+      <form id="payment-form" novalidate>
+        <div class="field" id="field-card-name">
+          <label for="card-name">Name on card</label>
+          <input type="text" id="card-name" autocomplete="cc-name">
+          <span class="err-msg"></span>
+        </div>
+
+        <div class="field" id="field-card-number">
+          <label for="card-number">Card number</label>
+          <input type="text" id="card-number" inputmode="numeric" placeholder="1234 5678 9012 3456" autocomplete="cc-number" maxlength="19">
+          <span class="err-msg"></span>
+        </div>
+
+        <div class="field-row">
+          <div class="field" id="field-expiry">
+            <label for="expiry">Expiry (MM/YY)</label>
+            <input type="text" id="expiry" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5">
+            <span class="err-msg"></span>
+          </div>
+          <div class="field" id="field-cvv">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" inputmode="numeric" placeholder="123" autocomplete="cc-csc" maxlength="4">
+            <span class="err-msg"></span>
+          </div>
+        </div>
+
+        <label for="promo" style="font-size:12px;color:var(--ink-soft);">Promo code (optional)</label>
+        <div class="promo-row">
+          <input type="text" id="promo" placeholder="e.g. SKYLINE10">
+          <button type="button" class="apply-btn" id="apply-promo">Apply</button>
+        </div>
+        <div class="promo-msg" id="promo-msg"></div>
+
+        <p class="secure-note">🔒 This is a simulated checkout — no real payment is processed.</p>
+
+        <button type="submit" class="pay-btn" id="pay-btn">Pay now</button>
+      </form>
+    </div>
+
+    <div class="summary-panel">
+      <h2>Order summary</h2>
+
+      <div class="summary-line"><span>Flight</span><span id="sum-flight">TU 101 · TUN → CDG</span></div>
+      <div class="summary-line"><span>Cabin</span><span id="sum-cabin">Economy</span></div>
+      <div class="summary-line"><span>Passengers</span><span id="sum-passengers">1</span></div>
+      <div class="summary-line"><span>Seats</span><span id="sum-seats">—</span></div>
+
+      <div class="summary-divider"></div>
+
+      <div class="summary-line"><span>Fare subtotal</span><span id="sum-subtotal">$245</span></div>
+      <div class="summary-line" id="discount-line" style="display:none;"><span>Discount</span><span id="sum-discount">-$0</span></div>
+      <div class="summary-line"><span>Taxes & fees</span><span id="sum-taxes">$32</span></div>
+
+      <div class="summary-divider"></div>
+
+      <div class="total-row">
+        <span class="label">Total</span>
+        <span class="value" id="sum-total">$277</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+
+  // --- Order summary from URL params, with fallbacks so the page works standalone ---
+  const flightLabel = params.get('flight') || 'TU 101 · TUN → CDG';
+  const cabin = params.get('cabin') || 'economy';
+  const passengers = parseInt(params.get('passengers')) || 1;
+  const seatsParam = params.get('seats');
+  const seats = seatsParam ? seatsParam.split(',') : [];
+  const subtotal = parseFloat(params.get('subtotal')) || 245 * passengers;
+  const taxes = Math.round(subtotal * 0.13);
+
+  document.getElementById('sum-flight').textContent = flightLabel;
+  document.getElementById('sum-cabin').textContent = cabin.charAt(0).toUpperCase() + cabin.slice(1);
+  document.getElementById('sum-passengers').textContent = passengers;
+  document.getElementById('sum-seats').textContent = seats.length ? seats.join(', ') : '—';
+  document.getElementById('sum-subtotal').textContent = `$${subtotal}`;
+  document.getElementById('sum-taxes').textContent = `$${taxes}`;
+
+  let discount = 0;
+  function recalcTotal() {
+    const total = subtotal - discount + taxes;
+    document.getElementById('sum-total').textContent = `$${total}`;
+  }
+  recalcTotal();
+
+  // --- Promo code (placeholder logic — one hardcoded working code) ---
+  const validPromo = { code: 'SKYLINE10', percent: 10 };
+  document.getElementById('apply-promo').addEventListener('click', () => {
+    const input = document.getElementById('promo');
+    const msg = document.getElementById('promo-msg');
+    const code = input.value.trim().toUpperCase();
+
+    if (!code) {
+      msg.textContent = 'Enter a code first';
+      msg.className = 'promo-msg error';
+      return;
+    }
+    if (code === validPromo.code) {
+      discount = Math.round(subtotal * (validPromo.percent / 100));
+      msg.textContent = `Applied — ${validPromo.percent}% off`;
+      msg.className = 'promo-msg success';
+      document.getElementById('discount-line').style.display = 'flex';
+      document.getElementById('sum-discount').textContent = `-$${discount}`;
+    } else {
+      discount = 0;
+      msg.textContent = 'Invalid or expired code';
+      msg.className = 'promo-msg error';
+      document.getElementById('discount-line').style.display = 'none';
+    }
+    recalcTotal();
+  });
+
+  // --- Card input formatting ---
+  const cardNumberInput = document.getElementById('card-number');
+  cardNumberInput.addEventListener('input', () => {
+    let digits = cardNumberInput.value.replace(/\D/g, '').slice(0, 16);
+    cardNumberInput.value = digits.replace(/(.{4})/g, '$1 ').trim();
+  });
+
+  const expiryInput = document.getElementById('expiry');
+  expiryInput.addEventListener('input', () => {
+    let digits = expiryInput.value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 3) {
+      expiryInput.value = digits.slice(0, 2) + '/' + digits.slice(2);
+    } else {
+      expiryInput.value = digits;
+    }
+  });
+
+  const cvvInput = document.getElementById('cvv');
+  cvvInput.addEventListener('input', () => {
+    cvvInput.value = cvvInput.value.replace(/\D/g, '').slice(0, 4);
+  });
+
+  // --- Validation ---
+  function setError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    field.classList.add('error');
+    field.querySelector('.err-msg').textContent = message;
+  }
+  function clearError(fieldId) {
+    const field = document.getElementById(fieldId);
+    field.classList.remove('error');
+    field.querySelector('.err-msg').textContent = '';
+  }
+
+  document.getElementById('payment-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+    ['field-card-name', 'field-card-number', 'field-expiry', 'field-cvv'].forEach(clearError);
+
+    const cardName = document.getElementById('card-name').value.trim();
+    const cardDigits = cardNumberInput.value.replace(/\D/g, '');
+    const expiry = expiryInput.value;
+    const cvv = cvvInput.value;
+
+    if (!cardName) { setError('field-card-name', 'Required'); valid = false; }
+
+    if (cardDigits.length !== 16) {
+      setError('field-card-number', 'Enter a 16-digit card number'); valid = false;
+    }
+
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+      setError('field-expiry', 'Use MM/YY'); valid = false;
+    } else {
+      const [mm, yy] = expiry.split('/').map(Number);
+      const now = new Date();
+      const currentYY = now.getFullYear() % 100;
+      const currentMM = now.getMonth() + 1;
+      if (mm < 1 || mm > 12) {
+        setError('field-expiry', 'Invalid month'); valid = false;
+      } else if (yy < currentYY || (yy === currentYY && mm < currentMM)) {
+        setError('field-expiry', 'Card expired'); valid = false;
+      }
+    }
+
+    if (cvv.length < 3) {
+      setError('field-cvv', 'Invalid CVV'); valid = false;
+    }
+
+    if (!valid) return;
+
+    const payload = {
+      cardName,
+      cardLast4: cardDigits.slice(-4),
+      expiry,
+      total: document.getElementById('sum-total').textContent
+    };
+
+    console.log('Payment payload (would be sent to /api/v1/payments):', payload);
+
+    const nextParams = new URLSearchParams(window.location.search);
+    nextParams.set('total', payload.total);
+
+    window.location.href = 'confirmation.html?' + nextParams.toString();
+  });
+</script>
+
+</body>
+</html>

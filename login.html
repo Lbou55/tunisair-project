@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skyline — Log in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --ink: #1A1A1A;
+    --ink-soft: #6B6B6B;
+    --brass: #D70218;
+    --brass-dark: #A5011A;
+    --teal: #A5011A;
+    --line: #E6E0DC;
+    --danger: #A5011A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  header {
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .logo img { height: 60px; width: auto; }
+
+  nav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 14px;
+    margin-left: 28px;
+  }
+
+  main {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 80px 24px 100px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+
+  .sub {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 36px;
+  }
+
+  /* Boarding-pass-style card, same family as the search ticket */
+  .card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 32px;
+    position: relative;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--brass);
+    border-radius: 4px 4px 0 0;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+
+  .field label {
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .field input {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    width: 100%;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--brass-dark);
+  }
+
+  .field.error input {
+    border-bottom: 1px solid var(--danger);
+  }
+  .field .err-msg {
+    font-size: 12px;
+    color: var(--danger);
+    min-height: 14px;
+  }
+
+  .row-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .remember input { accent-color: var(--brass-dark); }
+
+  .forgot {
+    color: var(--brass-dark);
+    text-decoration: none;
+  }
+  .forgot:hover { text-decoration: underline; }
+
+  .login-btn {
+    width: 100%;
+    background: var(--brass);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 3px;
+    padding: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .login-btn:hover { background: var(--brass-dark); }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0;
+    color: var(--ink-soft);
+    font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .register-link {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .register-link a {
+    color: var(--brass-dark);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .register-link a:hover { text-decoration: underline; }
+
+  .form-error {
+    background: #FCE9E9;
+    color: var(--danger);
+    border-radius: 3px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .form-error.show { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="assets/tna.jfif" alt="Tunisair logo">
+  </div>
+  <nav>
+    <a href="index.html">Search flights</a>
+    <a href="#">Manage booking</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Welcome back</h1>
+  <p class="sub">Log in to manage your bookings and check-in online.</p>
+
+  <div class="card">
+    <div class="form-error" id="form-error">Incorrect email or password.</div>
+
+    <form id="login-form" novalidate>
+      <div class="field" id="field-email">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+        <span class="err-msg"></span>
+      </div>
+
+      <div class="field" id="field-password">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password">
+        <span class="err-msg"></span>
+      </div>
+
+      <div class="row-between">
+        <label class="remember">
+          <input type="checkbox" id="remember" name="remember">
+          Remember me
+        </label>
+        <a href="#" class="forgot">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Log in</button>
+    </form>
+
+    <div class="divider">or</div>
+
+    <p class="register-link">Don't have an account? <a href="signup.html">Create one</a></p>
+  </div>
+</main>
+
+<script>
+  const form = document.getElementById('login-form');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const formError = document.getElementById('form-error');
+
+  function setError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    field.classList.add('error');
+    field.querySelector('.err-msg').textContent = message;
+  }
+  function clearError(fieldId) {
+    const field = document.getElementById(fieldId);
+    field.classList.remove('error');
+    field.querySelector('.err-msg').textContent = '';
+  }
+
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+    formError.classList.remove('show');
+    ['field-email', 'field-password'].forEach(clearError);
+
+    if (!emailInput.value.trim()) {
+      setError('field-email', 'Enter your email'); valid = false;
+    } else if (!isValidEmail(emailInput.value.trim())) {
+      setError('field-email', 'Enter a valid email'); valid = false;
+    }
+
+    if (!passwordInput.value) {
+      setError('field-password', 'Enter your password'); valid = false;
+    }
+
+    if (!valid) return;
+
+    // No backend yet — this just shows what would be sent to /api/v1/auth/login
+    console.log('Login payload (would be sent to /api/v1/auth/login):', {
+      email: emailInput.value.trim(),
+      password: '••••••••',
+      remember: document.getElementById('remember').checked
+    });
+    alert('Would log in with:\n' + emailInput.value.trim());
+  });
+</script>
+
+</body>
+</html>
